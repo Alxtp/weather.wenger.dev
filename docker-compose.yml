@@ -1,0 +1,26 @@
+version: "1.0"
+
+services:
+  weewx:
+    image: greedtp/weewx:0.0.1
+    container_name: weewx
+    volumes:
+      - weewx-db:/home/weewx-data/archive
+      - weewx-html:/home/weewx-data/public_html
+    restart: unless-stopped
+    devices:
+      - /dev/VantageUSB:/dev/ttyUSB0
+  nginx:
+    container_name: weewx-nginx
+    image: nginx:latest
+    volumes:
+      - weewx-html:/usr/share/nginx/html
+
+volumes:
+  weewx-db:
+  weewx-html:
+
+networks:
+  default:
+    external: true
+    name: private
