@@ -10,10 +10,6 @@ RUN chmod +x /start.sh
 
 # @see https://blog.nuvotex.de/running-syslog-in-a-container/
 # @todo https://www.weewx.com/docs/5.0/usersguide/monitoring/#logging-on-macos
-RUN apt update &&\
-    apt install -q -y --no-install-recommends rsyslog=8.2302.0-1+deb12u1 &&\
-    apt clean &&\
-    rm -rf /var/lib/apt/lists/*
 
 RUN python -m pip install --upgrade pip
 RUN pip install --upgrade virtualenv
