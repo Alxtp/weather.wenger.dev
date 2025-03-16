@@ -11,7 +11,7 @@ RUN chmod +x /start.sh
 # @see https://blog.nuvotex.de/running-syslog-in-a-container/
 # @todo https://www.weewx.com/docs/5.0/usersguide/monitoring/#logging-on-macos
 RUN apt update &&\
-    apt install -q -y --no-install-recommends rsyslog=8.2302.0-1 &&\
+    apt install -q -y --no-install-recommends rsyslog=8.2302.0-1+deb12u1 &&\
     apt clean &&\
     rm -rf /var/lib/apt/lists/*
 
@@ -40,12 +40,12 @@ RUN python -m venv ${WEEWX_HOME}/weewx-venv &&\
 
 RUN . ${WEEWX_HOME}/weewx-venv/bin/activate &&\
     weectl station create "${WEEWX_HOME}" --no-prompt \
-        --driver=weewx.drivers.vantage \
-        --altitude="874,meter" \
-        --latitude=46.769 \
-        --longitude=7.661 \
-        --location="Schwendibach" \
-        --units="metricwx"
+    --driver=weewx.drivers.vantage \
+    --altitude="874,meter" \
+    --latitude=46.769 \
+    --longitude=7.661 \
+    --location="Schwendibach, BE" \
+    --units="metricwx"
 
 RUN . ${WEEWX_HOME}/weewx-venv/bin/activate &&\
     weectl extension install -y --config "${WEEWX_HOME}/weewx.conf" /tmp/weewx-wdc/ &&\
