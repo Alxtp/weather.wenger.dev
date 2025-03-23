@@ -5,8 +5,7 @@ ARG WDC_VERSION="v3.5.1"
 ARG WEEWX_UID=2749
 ENV WEEWX_HOME="/home/weewx-data"
 
-COPY src/start.sh /start.sh
-RUN chmod +x /start.sh
+COPY --chmod=0755 src/start.sh /start.sh
 
 # @see https://blog.nuvotex.de/running-syslog-in-a-container/
 # @todo https://www.weewx.com/docs/5.0/usersguide/monitoring/#logging-on-macos
@@ -43,16 +42,25 @@ RUN . ${WEEWX_HOME}/weewx-venv/bin/activate &&\
     --location="Schwendibach, BE" \
     --units="metricwx"
 
+# enable console logging
+RUN echo '[Logging]\n    [[root]]\n      level = INFO\n      handlers = console,' >> weewx.conf
+
 RUN . ${WEEWX_HOME}/weewx-venv/bin/activate &&\
     weectl extension install -y --config "${WEEWX_HOME}/weewx.conf" /tmp/weewx-wdc/ &&\
     weectl extension install -y --config "${WEEWX_HOME}/weewx.conf" /tmp/weewx-mqtt.zip
 
 COPY src/skin.conf ./skins/weewx-wdc/
 
-# weewx-wdc.
-RUN sed -i -z -e 's/skin = Seasons\n        enable = true/skin = Seasons\n        enable = false/g' weewx.conf
+# enable weewx-wdc
+RUN sed -i -z -e 's/skin = Seasons\n        enable = true/skin = Seasons\n        enable = false/' weewx.conf
 
-# weewx-mqtt.
+# set language
+RUN sed -i -z -e 's/lang = en/lang = de_CH.utf8/' weewx.conf
+
+# set custom groups
+RUN sed -i -z -e 's/\[\[\[\[Groups\]\]\]\]/[[[[Groups]]]]\n                group_speed = km_per_hour\n                group_speed2 = km_per_hour2/' weewx.conf
+
+# configure weewx-mqtt
 RUN sed -i -z -e 's|INSERT_SERVER_URL_HERE|mqtt://user:password@host:port\n        topic = weather\n        unit_system = METRICWX\n        binding = loop\n        [[[inputs]]]\n            [[[[windSpeed]]]]\n                format = %.0f\n            [[[[windGust]]]]\n                format = %.0f|g' weewx.conf
 
 VOLUME [ "${WEEWX_HOME}/public_html" ]
