@@ -1,23 +1,14 @@
-FROM python:3.13-bookworm
+ARG PYTHON_VERSION="3.13"
+ARG WEEWX_HOME="/home/weewx"
+
+FROM python:${PYTHON_VERSION} AS build
 
 ARG WEEWX_VERSION="5.1.0"
 ARG WDC_VERSION="v3.5.1"
-ARG WEEWX_UID=2749
-ENV WEEWX_HOME="/home/weewx-data"
-
-COPY --chmod=0755 src/start.sh /start.sh
-
-# @see https://blog.nuvotex.de/running-syslog-in-a-container/
-# @todo https://www.weewx.com/docs/5.0/usersguide/monitoring/#logging-on-macos
+ARG WEEWX_HOME
 
 RUN python -m pip install --upgrade pip
 RUN pip install --upgrade virtualenv
-
-RUN addgroup --system --gid ${WEEWX_UID} weewx &&\
-    adduser --system --uid ${WEEWX_UID} --ingroup weewx weewx
-
-# Configure timezone.
-RUN ln -sf /usr/share/zoneinfo/Europe/Zurich /etc/localtime
 
 WORKDIR /tmp
 
@@ -52,18 +43,32 @@ RUN . ${WEEWX_HOME}/weewx-venv/bin/activate &&\
 COPY src/skin.conf ./skins/weewx-wdc/
 
 # enable weewx-wdc
-RUN sed -i -z -e 's/skin = Seasons\n        enable = true/skin = Seasons\n        enable = false/' weewx.conf
+RUN sed -i -z -e 's/skin = Seasons\n        enable = true/skin = Seasons\n        enable = false/' weewx.conf &&\
+    sed -i -z -e 's/lang = en/lang = de_CH.utf8/' weewx.conf &&\
+    sed -i -z -e 's/\[\[\[\[Groups\]\]\]\]/[[[[Groups]]]]\n                group_speed = km_per_hour\n                group_speed2 = km_per_hour2/' weewx.conf &&\
+    sed -i -z -e 's|INSERT_SERVER_URL_HERE|mqtt://user:password@host:port\n        topic = weather\n        unit_system = METRICWX\n        binding = loop\n        [[[inputs]]]\n            [[[[windSpeed]]]]\n                format = %.0f\n            [[[[windGust]]]]\n                format = %.0f|g' weewx.conf
 
-# set language
-RUN sed -i -z -e 's/lang = en/lang = de_CH.utf8/' weewx.conf
+FROM python:${PYTHON_VERSION}-alpine AS final
 
-# set custom groups
-RUN sed -i -z -e 's/\[\[\[\[Groups\]\]\]\]/[[[[Groups]]]]\n                group_speed = km_per_hour\n                group_speed2 = km_per_hour2/' weewx.conf
+ARG WEEWX_HOME
+ENV WEEWX_HOME=${WEEWX_HOME}
+ARG WEEWX_UID=10000
 
-# configure weewx-mqtt
-RUN sed -i -z -e 's|INSERT_SERVER_URL_HERE|mqtt://user:password@host:port\n        topic = weather\n        unit_system = METRICWX\n        binding = loop\n        [[[inputs]]]\n            [[[[windSpeed]]]]\n                format = %.0f\n            [[[[windGust]]]]\n                format = %.0f|g' weewx.conf
+WORKDIR ${WEEWX_HOME}
+
+COPY --chmod=0755 src/start.sh /start.sh
+COPY --from=build ${WEEWX_HOME} ${WEEWX_HOME}
+
+RUN addgroup --system --gid ${WEEWX_UID} weewx &&\
+    adduser --system --uid ${WEEWX_UID} --ingroup weewx weewx &&\
+    chown -R weewx:weewx ${WEEWX_HOME}
+
+# Configure timezone.
+RUN ln -sf /usr/share/zoneinfo/Europe/Zurich /etc/localtime
 
 VOLUME [ "${WEEWX_HOME}/public_html" ]
 VOLUME [ "${WEEWX_HOME}/archive" ]
+
+USER weewx
 
 ENTRYPOINT [ "/start.sh" ]

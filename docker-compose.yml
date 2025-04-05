@@ -5,8 +5,8 @@ services:
     image: greedtp/weewx:0.0.1
     container_name: weewx
     volumes:
-      - weewx-db:/home/weewx-data/archive
-      - weewx-html:/home/weewx-data/public_html
+      - weewx-db:/home/weewx/archive
+      - weewx-html:/home/weewx/public_html
     restart: unless-stopped
     devices:
       - /dev/VantageUSB:/dev/ttyUSB0
