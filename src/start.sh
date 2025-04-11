@@ -2,7 +2,6 @@
 
 echo "WEEWX_HOME: ${WEEWX_HOME}"
 
-# start weewx
 echo 'Starting weewx'
 
 . "${WEEWX_HOME}"/weewx-venv/bin/activate

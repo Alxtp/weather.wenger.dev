@@ -42,7 +42,6 @@ RUN . ${WEEWX_HOME}/weewx-venv/bin/activate &&\
 
 COPY src/skin.conf ./skins/weewx-wdc/
 
-# enable weewx-wdc
 RUN sed -i -z -e 's/skin = Seasons\n        enable = true/skin = Seasons\n        enable = false/' weewx.conf &&\
     sed -i -z -e 's/lang = en/lang = de_CH.utf8/' weewx.conf &&\
     sed -i -z -e 's/\[\[\[\[Groups\]\]\]\]/[[[[Groups]]]]\n                group_speed = km_per_hour\n                group_speed2 = km_per_hour2/' weewx.conf &&\
@@ -54,17 +53,19 @@ ARG WEEWX_HOME
 ENV WEEWX_HOME=${WEEWX_HOME}
 ARG WEEWX_UID=10000
 
-WORKDIR ${WEEWX_HOME}
-
 COPY --chmod=0755 src/start.sh /start.sh
 COPY --from=build ${WEEWX_HOME} ${WEEWX_HOME}
+
+# Configure timezone.
+RUN ln -sf /usr/share/zoneinfo/Europe/Zurich /etc/localtime
+
+RUN mkdir ${WEEWX_HOME}/public_html &&\
+    mkdir ${WEEWX_HOME}/archive &&\
+    touch ${WEEWX_HOME}/public_html/placeholder
 
 RUN addgroup --system --gid ${WEEWX_UID} weewx &&\
     adduser --system --uid ${WEEWX_UID} --ingroup weewx weewx &&\
     chown -R weewx:weewx ${WEEWX_HOME}
-
-# Configure timezone.
-RUN ln -sf /usr/share/zoneinfo/Europe/Zurich /etc/localtime
 
 VOLUME [ "${WEEWX_HOME}/public_html" ]
 VOLUME [ "${WEEWX_HOME}/archive" ]
