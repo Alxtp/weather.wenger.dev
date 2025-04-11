@@ -59,6 +59,7 @@ COPY --from=build ${WEEWX_HOME} ${WEEWX_HOME}
 # Configure timezone.
 RUN ln -sf /usr/share/zoneinfo/Europe/Zurich /etc/localtime
 
+# Create directories and placeholder to keep non-root permission on volumes
 RUN mkdir ${WEEWX_HOME}/public_html &&\
     mkdir ${WEEWX_HOME}/archive &&\
     touch ${WEEWX_HOME}/public_html/placeholder
