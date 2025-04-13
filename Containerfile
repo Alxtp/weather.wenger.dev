@@ -56,7 +56,7 @@ ARG WEEWX_UID=10000
 COPY --chmod=0755 src/start.sh /start.sh
 COPY --from=build ${WEEWX_HOME} ${WEEWX_HOME}
 
-# Configure timezone.
+# Configure timezone
 RUN ln -sf /usr/share/zoneinfo/Europe/Zurich /etc/localtime
 
 # Create directories and placeholder to keep non-root permission on volumes
