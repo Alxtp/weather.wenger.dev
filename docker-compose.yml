@@ -2,19 +2,25 @@ version: "1.0"
 
 services:
   weewx:
-    image: greedtp/weewx:0.0.1
+    image: thrawn.home:5000/weewx:0.0.10
     container_name: weewx
     volumes:
       - weewx-db:/home/weewx/archive
       - weewx-html:/home/weewx/public_html
+
     restart: unless-stopped
     devices:
       - /dev/VantageUSB:/dev/ttyUSB0
   nginx:
     container_name: weewx-nginx
     image: nginx:latest
+    depends_on:
+      - weewx
     volumes:
       - weewx-html:/usr/share/nginx/html
+  mosquitto:
+    container_name: weewx-mosquitto
+    image: thrawn.home:5000/mosquitto:0.0.1
 
 volumes:
   weewx-db:
