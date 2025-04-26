@@ -1,30 +1,34 @@
-version: "1.0"
-
 services:
   weewx:
-    image: thrawn.home:5000/weewx:0.0.10
+    image: thrawn.home:5000/weewx:0.0.14
     container_name: weewx
-    volumes:
-      - weewx-db:/home/weewx/archive
-      - weewx-html:/home/weewx/public_html
-
     restart: unless-stopped
+    volumes:
+      - db:/home/weewx/archive
+      - html:/home/weewx/public_html
     devices:
       - /dev/VantageUSB:/dev/ttyUSB0
   nginx:
     container_name: weewx-nginx
     image: nginx:latest
+    restart: unless-stopped
     depends_on:
       - weewx
     volumes:
-      - weewx-html:/usr/share/nginx/html
+      - html:/usr/share/nginx/html
   mosquitto:
+    restart: unless-stopped
     container_name: weewx-mosquitto
-    image: thrawn.home:5000/mosquitto:0.0.1
+    image: thrawn.home:5000/mosquitto:0.0.3
+    volumes:
+      - mqtt-data:/mosquitto/data
+      - mqtt-log:/mosquitto/log
 
 volumes:
-  weewx-db:
-  weewx-html:
+  db:
+  html:
+  mqtt-data:
+  mqtt-log:
 
 networks:
   default:
