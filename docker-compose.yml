@@ -1,7 +1,10 @@
 services:
   weewx:
-    image: thrawn.home:5000/weewx:0.0.14
     container_name: weewx
+    build:
+      context: ./container/weewx
+      secrets:
+        - mqtt_password
     restart: unless-stopped
     volumes:
       - db:/home/weewx/archive
@@ -9,7 +12,6 @@ services:
     devices:
       - /dev/VantageUSB:/dev/ttyUSB0
   nginx:
-    container_name: weewx-nginx
     image: nginx:latest
     restart: unless-stopped
     depends_on:
@@ -17,9 +19,11 @@ services:
     volumes:
       - html:/usr/share/nginx/html
   mosquitto:
+    build:
+      context: ./container/mosquitto
+      secrets:
+        - mqtt_password
     restart: unless-stopped
-    container_name: weewx-mosquitto
-    image: thrawn.home:5000/mosquitto:0.0.3
     volumes:
       - mqtt-data:/mosquitto/data
       - mqtt-log:/mosquitto/log
@@ -34,3 +38,7 @@ networks:
   default:
     external: true
     name: private
+
+secrets:
+  mqtt_password:
+    environment: "MQTT_PASSWORD"
