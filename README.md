@@ -1,9 +1,20 @@
 # weewx
 Custom WeeWX Docker image
 
-# Setup
-Install QEMU to build for other Platforms: `sudo apt install qemu-user-static`
+## Setup
+When using Podman install QEMU to build for other Platforms: `sudo apt install qemu-user-static`
 
-Export pwd for mqtt: `export MQTT_PASSWORD=<password>`
-Build weewx from source: `podman build -t <tag> --secret id=mqtt_password,env=MQTT_PASSWORD --platform linux/arm64 container/weewx/`
-Build mosquitto from source: `podman build -t <tag> --secret id=mqtt_password,env=MQTT_PASSWORD --platform linux/arm64 container/mosquitto/`
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/GreedTP/weewx
+    cd weewx
+    ```
+2. Run the `init.sh` script to create a random password file or create a `mqtt_password` file with a password manualy:
+    ```bash
+    $ ./init.sh
+    Generating MQTT password...
+    ```
+3. Start the Docker Compose stack:
+    ```bash
+    docker compose up -d
+    ```
