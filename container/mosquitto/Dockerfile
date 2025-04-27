@@ -3,7 +3,7 @@ FROM eclipse-mosquitto:2.0
 COPY src/mosquitto.conf /mosquitto/config/mosquitto.conf
 
 RUN --mount=type=secret,id=mqtt_password \
-    mosquitto_passwd -c -b /mosquitto/config/password_file weewx "${MQTT_PASSWORD}"
+    mosquitto_passwd -c -b /mosquitto/config/password_file weewx "$(cat /run/secrets/mqtt_password)"
 
 RUN chown -R mosquitto:mosquitto /mosquitto
 
