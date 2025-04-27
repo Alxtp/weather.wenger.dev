@@ -12,6 +12,7 @@ services:
     devices:
       - /dev/VantageUSB:/dev/ttyUSB0
   nginx:
+    container_name: weewx-nginx
     image: nginx:latest
     restart: unless-stopped
     depends_on:
@@ -19,6 +20,7 @@ services:
     volumes:
       - html:/usr/share/nginx/html
   mosquitto:
+    container_name: weewx-mosquitto
     build:
       context: ./container/mosquitto
       secrets:
@@ -41,4 +43,4 @@ networks:
 
 secrets:
   mqtt_password:
-    environment: "MQTT_PASSWORD"
+    environment: MQTT_PASSWORD
