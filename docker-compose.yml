@@ -43,4 +43,4 @@ networks:
 
 secrets:
   mqtt_password:
-    environment: MQTT_PASSWORD
+    file: stack.env

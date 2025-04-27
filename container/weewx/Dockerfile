@@ -43,7 +43,6 @@ RUN . ${WEEWX_HOME}/weewx-venv/bin/activate &&\
 COPY src/skin.conf ./skins/weewx-wdc/
 
 RUN --mount=type=secret,id=mqtt_password \
-    MQTT_PASSWORD=$(cat /run/secrets/mqtt_password) && \
     sed -i -z -e "s/skin = Seasons\n        enable = true/skin = Seasons\n        enable = false/" weewx.conf &&\
     sed -i -z -e "s/lang = en/lang = de_CH.utf8/" weewx.conf &&\
     sed -i -z -e "s/\[\[\[\[Groups\]\]\]\]/[[[[Groups]]]]\n                group_speed = km_per_hour\n                group_speed2 = km_per_hour2/" weewx.conf &&\
