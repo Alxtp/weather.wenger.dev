@@ -35,7 +35,7 @@ This project provides a containerized implementation of WeeWX weather station so
 
    - Or export as environment variable:
       ```bash
-      export MQTT_PASSWORD='your_secure_password'
+      export MQTT_PASSWORD="your_secure_password"
       ```
 
 4. Modify the `docker-compose.yml` file with the correct usb path of the connected weather statio. Usually:

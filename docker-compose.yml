@@ -3,6 +3,17 @@ services:
     container_name: weewx
     build:
       context: ./container/weewx
+      args:
+        - TIMEZONE
+        - LANGUAGE
+        - STATION_ALTITUDE
+        - STATION_LATITUDE
+        - STATION_LONGITUDE
+        - STATION_LOCATION
+        - MQTT_ENABLED
+        - MQTT_HOST
+        - MQTT_PORT
+        - MQTT_SSL
       secrets:
         - mqtt_password
     restart: unless-stopped
