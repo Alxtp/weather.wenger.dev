@@ -37,10 +37,10 @@ RUN python -m venv ${WEEWX_HOME}/weewx-venv &&\
 RUN . ${WEEWX_HOME}/weewx-venv/bin/activate &&\
     weectl station create "${WEEWX_HOME}" --no-prompt \
     --driver=weewx.drivers.vantage \
-    --altitude=${STATION_ALTITUDE} \
+    --altitude="${STATION_ALTITUDE}" \
     --latitude=${STATION_LATITUDE} \
     --longitude=${STATION_LONGITUDE} \
-    --location=${STATION_LOCATION} \
+    --location="${STATION_LOCATION}" \
     --units="metricwx"
 
 # enable console logging
