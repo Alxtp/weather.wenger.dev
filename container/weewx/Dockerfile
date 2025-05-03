@@ -60,7 +60,7 @@ RUN --mount=type=secret,id=mqtt_password \
     sed -i -z -e "s|INSERT_SERVER_URL_HERE|mqtt://weewx:${MQTT_PASSWORD}@weewx-mosquitto:1883\n        topic = weather\n        unit_system = METRICWX\n        binding = loop\n        [[[inputs]]]\n            [[[[windSpeed]]]]\n                format = %.0f\n            [[[[windGust]]]]\n                format = %.0f|g" weewx.conf &&\
     sed -i -z -e "s/mqtt_websockets_enabled = 0/mqtt_websockets_enabled = ${MQTT_ENABLED}/" ./skins/weewx-wdc/skin.conf &&\
     sed -i -z -e "s/mqtt_websockets_host = [\"][\"]/mqtt_websockets_host = \"${MQTT_HOST}}\"/" ./skins/weewx-wdc/skin.conf &&\
-    sed -i -z -e "s/mqtt_websockets_port = 0/mqtt_websockets_port = ${MQTT_PORT}}/" ./skins/weewx-wdc/skin.conf &&\
+    sed -i -z -e "s/mqtt_websockets_port = 80/mqtt_websockets_port = ${MQTT_PORT}}/" ./skins/weewx-wdc/skin.conf &&\
     sed -i -z -e "s/mqtt_websockets_password = [\"][\"]/mqtt_websockets_password = \"${MQTT_PASSWORD}\"/" ./skins/weewx-wdc/skin.conf
 
 FROM python:${PYTHON_VERSION}-alpine AS final
