@@ -1,11 +1,12 @@
-# Weewx Docker Compose
-Custom WeeWX Docker image with weewx-wdc skin and MQTT support.
+# WeeWX Docker Setup
+
+A complete Docker Compose setup for running WeeWX weather station software with the weewx-wdc skin, MQTT broker for live updates, and a web server.
 
 ## Overview
 This project provides a containerized implementation of WeeWX weather station software with the weewx-wdc skin and MQTT integration with Mosquitto. The setup includes three containers:
 - **weewx**: Core weather station software processing data from your station
-- **nginx**: Web server to display the weewx-wdc weather dashboard
-- **mosquitto**: MQTT broker for live updates on the dasboard
+- **nginx**: Web server to publish the weewx-wdc weather dashboard
+- **mosquitto**: MQTT broker for live updates on the dashboard
 
 ## Sources
 - [WeeWX](https://github.com/weewx/weewx) - Weather station software
@@ -28,7 +29,7 @@ This project provides a containerized implementation of WeeWX weather station so
 
 3. Configure the MQTT password with one of these options:
 
-   - Add to your `.env` file
+   - Add this to your `.env` file
       ```
       MQTT_PASSWORD="your_secure_password"
       ```
@@ -54,10 +55,17 @@ This project provides a containerized implementation of WeeWX weather station so
     ```
 
 ## Configuration
-The weather station and MQTT settings are configured through the `.env` file. See the `.env.example` file for all available options and their descriptions.
+The weather station and MQTT settings are configured through the `.env` file. See the `.env.example` file for all available options and their descriptions. The alternative would be to specify the values directly in the docker-compose like:
+```
+services:
+  weewx:
+    build:
+      args:
+        - TIMEZONE="Europe/Zurich"
+```
 
 ## Station Support
-The default configuration is set up for a Davis Vantage weather station connected via USB and with the `metricwx` option for units, but you can modify the configuration to work with other supported weather station hardware and units.
+The project was setup to support only the Davis Vantage weather station connected via USB and with the `metricwx` option for units, but you can modify the setup to work with other supported weather station hardware and units.
 
 ## Publish the Dashboard
 This setup uses an external Docker network named `private` for all container communications. That means:
@@ -66,7 +74,7 @@ This setup uses an external Docker network named `private` for all container com
 - To access the Website and MQTT externally, setup and configure a reverse proxy to forward requests to the `weewx-nginx` container on port `80` and MQTT websocket connections to the `weewx-mosquitto` container on port `9001`
 
 ## Data Persistence
-Weather data and configurations are stored in Docker volumes for persistence:
+Weather data and the web files are stored in Docker volumes:
 - `db`: Contains the WeeWX SQLite database with archived weather data (database can be replaced with a database of an existing setup to migrate the data)
 - `html`: Contains the generated website files
 - `mqtt-data` and `mqtt-log`: Store MQTT broker data and logs
