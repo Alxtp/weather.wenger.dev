@@ -50,7 +50,7 @@ RUN . ${WEEWX_HOME}/weewx-venv/bin/activate &&\
     weectl extension install -y --config "${WEEWX_HOME}/weewx.conf" /tmp/weewx-wdc/ &&\
     weectl extension install -y --config "${WEEWX_HOME}/weewx.conf" /tmp/weewx-mqtt.zip
 
-COPY src/skin.conf ./skins/weewx-wdc/
+COPY src/skin.conf src/favicon.ico ./skins/weewx-wdc/
 
 RUN --mount=type=secret,id=mqtt_password \
     MQTT_PASSWORD=$(cat /run/secrets/mqtt_password) &&\
