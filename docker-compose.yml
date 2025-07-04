@@ -30,6 +30,12 @@ services:
       - weewx
     volumes:
       - html:/usr/share/nginx/html
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.weewx.rule=Host(`wetter.wenger.dev`) || Host(`weather.wenger.dev`)
+      - traefik.http.routers.weewx.entryPoints=https
+      - traefik.http.routers.weewx.tls=true
+      - traefik.http.routers.weewx.tls.certresolver=cloudflare
   mosquitto:
     container_name: weewx-mosquitto
     build:
@@ -40,6 +46,14 @@ services:
     volumes:
       - mqtt-data:/mosquitto/data
       - mqtt-log:/mosquitto/log
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mosquitto.rule=Host(`mqtt.wenger.dev`)
+      - traefik.http.routers.mosquitto.entryPoints=https
+      - traefik.http.routers.mosquitto.tls=true
+      - traefik.http.routers.mosquitto.tls.certresolver=cloudflare
+      - traefik.http.routers.mosquitto.service=mosquitto
+      - traefik.http.services.mosquitto.loadbalancer.server.port=9001
 
 volumes:
   db:
