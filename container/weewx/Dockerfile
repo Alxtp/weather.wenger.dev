@@ -83,9 +83,8 @@ RUN mkdir ${WEEWX_HOME}/public_html &&\
     mkdir ${WEEWX_HOME}/archive &&\
     touch ${WEEWX_HOME}/public_html/placeholder
 
-RUN addgroup --system --gid ${WEEWX_UID} weewx &&\
-    adduser --system --uid ${WEEWX_UID} --ingroup weewx weewx &&\
-    chown -R weewx:weewx ${WEEWX_HOME}
+RUN adduser weewx --system --uid ${WEEWX_UID} --ingroup dialout &&\
+    chown -R weewx ${WEEWX_HOME}
 
 VOLUME [ "${WEEWX_HOME}/public_html" ]
 VOLUME [ "${WEEWX_HOME}/archive" ]
