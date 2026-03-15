@@ -16,6 +16,7 @@ services:
         - MQTT_SSL
       secrets:
         - mqtt_password
+      network: host
     restart: unless-stopped
     volumes:
       - db:/home/weewx/archive
@@ -44,6 +45,7 @@ services:
       context: ./container/mosquitto
       secrets:
         - mqtt_password
+      network: host
     restart: unless-stopped
     volumes:
       - mqtt-data:/mosquitto/data
