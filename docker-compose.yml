@@ -21,8 +21,6 @@ services:
     volumes:
       - db:/home/weewx/archive
       - html:/home/weewx/public_html
-    labels:
-      - com.centurylinklabs.watchtower.enable=false
     devices:
       - /dev/ttyUSB0:/dev/ttyUSB0
   nginx:
