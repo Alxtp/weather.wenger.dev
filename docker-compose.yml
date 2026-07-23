@@ -58,7 +58,6 @@ services:
       - traefik.http.routers.mosquitto.tls.certresolver=cloudflare
       - traefik.http.routers.mosquitto.service=mosquitto
       - traefik.http.services.mosquitto.loadbalancer.server.port=9001
-      - com.centurylinklabs.watchtower.enable=false
 
 volumes:
   db:
